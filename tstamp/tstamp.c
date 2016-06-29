@@ -29,7 +29,10 @@ static rx_handler_result_t rh_handle_frame(struct sk_buff **pskb)
 {
 	rx_handler_result_t res = RX_HANDLER_CONSUMED;
 	struct sk_buff *skb = *pskb;
-	printk(KERN_INFO "received time tv64: %lld\n", skb->tstamp.tv64);
+	struct skb_shared_hwtstamps *hwtstamps;
+	hwtstamps = skb_hwtstamps(skb);
+	pr_info("received sw tstamp tv64: %lld\n", skb->tstamp.tv64);
+	pr_info("received hw tstamp tv64: %lld\n", hwtstamps->hwtstamp.tv64);
 	//const unsigned char *dest = eth_hdr(skb)->h_dest;
 	//pr_info("Mac address: %pM\n", dest);
 
