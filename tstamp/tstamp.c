@@ -29,6 +29,7 @@ static rx_handler_result_t rh_handle_frame(struct sk_buff **pskb)
 {
 	rx_handler_result_t res = RX_HANDLER_CONSUMED;
 	struct sk_buff *skb = *pskb;
+	printk(KERN_INFO "received time tv64: %lld\n", skb->tstamp.tv64);
 	//const unsigned char *dest = eth_hdr(skb)->h_dest;
 	//pr_info("Mac address: %pM\n", dest);
 
