@@ -23,16 +23,24 @@ static char *ifname = "eth0";
 static struct rh_dev *rh;
 static unsigned int pps[16];
 
+static x540_hwtstamp_init(void)
+{
+	struct ifreq device;
+	memset(&device, 0, sizeof(device));
+	strncpy(device.ifr_name, interface, sizeof(device.ifr_name));
+
+}
 
 /* note: already called with rcu_read_lock */
 static rx_handler_result_t rh_handle_frame(struct sk_buff **pskb)
 {
 	rx_handler_result_t res = RX_HANDLER_CONSUMED;
 	struct sk_buff *skb = *pskb;
+	const uint16_t dest_uport = be16_to_cpu(udp_hdr(skb)->dest);
 	struct skb_shared_hwtstamps *hwtstamps;
 	hwtstamps = skb_hwtstamps(skb);
-	pr_info("received sw tstamp tv64: %lld\n", skb->tstamp.tv64);
-	pr_info("received hw tstamp tv64: %lld\n", hwtstamps->hwtstamp.tv64);
+	pr_info("received sw tstamp tv64: %lld (uport: %d)\n", skb->tstamp.tv64, dest_uport);
+	pr_info("received hw tstamp tv64: %lld (uport: %d)\n", hwtstamps->hwtstamp.tv64, dest_uport);
 	//const unsigned char *dest = eth_hdr(skb)->h_dest;
 	//pr_info("Mac address: %pM\n", dest);
 
@@ -78,6 +86,8 @@ static int __init rh_init(void)
 
 	for(i = 0; i < 10; i++)
 		pps[i] = 0;
+	
+	x540_hwtstamp_init();
 
 out:
 	return rc;
