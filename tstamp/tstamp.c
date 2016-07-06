@@ -5,6 +5,7 @@
 #include <linux/smp.h>
 #include <linux/err.h>
 #include <linux/rtnetlink.h>
+#include <linux/byteorder/generic.h>
 
 #define RXHOOK_VERSION  "0.0.0"
 
